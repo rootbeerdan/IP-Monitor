@@ -10,24 +10,28 @@ on:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: [windows-latest, macos-latest]
+        go-version: [1.17.x]
+        platform: [windows, macos]
         arch: [amd64, arm64]
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Set up Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: 1.17
-      - name: Install dependencies
-        run: go mod download
-      - name: Build
-        run: go build -ldflags "-s -w" -o "myapp-{{ matrix.os }}-{{ matrix.arch }}"
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: myapp-{{ matrix.os }}-{{ matrix.arch }}
-          path: myapp-{{ matrix.os }}-{{ matrix.arch }}
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: ${{ matrix.go-version }}
+        platform: ${{ matrix.platform }}
+
+    - name: Build for ${{ matrix.platform }}/${{ matrix.arch }}
+      run: GOOS=${{ matrix.platform }} GOARCH=${{ matrix.arch }} go build -o myprogram-${{ matrix.platform }}-${{ matrix.arch }}
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: myprogram-${{ matrix.platform }}-${{ matrix.arch }}
+        path: myprogram-${{ matrix.platform }}-${{ matrix.arch }}
