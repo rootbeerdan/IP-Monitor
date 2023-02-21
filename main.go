@@ -96,3 +96,4 @@ func sendNotification(title string, message string) {
     if err != nil {
         panic(err)
     }
+}
