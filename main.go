@@ -93,4 +93,6 @@ func getIcon(color string) []byte {
 func sendNotification(title string, message string) {
     // Send a desktop notification using the "beeep" package
     err := beeep.Notify(title, message, "")
-    if err !=
+    if err != nil {
+        panic(err)
+    }
